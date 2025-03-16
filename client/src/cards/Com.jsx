@@ -25,7 +25,7 @@ const articles = [
     description:
       "Insecticides are chemical or natural substances used to control, repel, or eliminate insects that can damage crops, plants, and structures.",
     imgSrc: "https://i.pinimg.com/474x/2b/de/07/2bde0710331223ff678edddc705af4a4.jpg",
-    link: "/articles/sustainable-farming",
+    link: "/insecticides",
   },
   // {
   //   title: "Renewable Energy Innovations",

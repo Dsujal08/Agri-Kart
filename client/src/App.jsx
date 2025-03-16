@@ -24,6 +24,9 @@ import SchemeDetails from './Schemes/SchemeDetails'
 import Scheme from './Schemes/Schemes';
 import Features from './components/Features';
 import EditProfile from './components/EditProfile';
+import InsDetails from './Insecticides/InsDetails'
+import InsLayout from './Insecticides/Inslayout'
+import HomeIns from './Insecticides/HomeIns'
 const App = () => {
   return (
     <CartProvider>
@@ -43,6 +46,7 @@ const App = () => {
           <Route path="/organicfruits" element={<OrganicFruits />} />
           <Route path="/features" element={<Features />} />
          < Route path="/edit-profile" element={<EditProfile />} />
+         
 
           <Route path="/" element={<Scheme />} />
           <Route path="/scheme/:id" element={<SchemeDetails />} />
@@ -51,6 +55,11 @@ const App = () => {
           <Route path="/seedsDetails" element={<SeedsDetails />} />
           <Route path="/seeds" element={<Layout />}>
             <Route index element={<Homeseeds />} />
+          </Route>
+
+          <Route path="/" element={<InsDetails />} />
+          <Route path="/insecticides" element={<InsLayout />}>
+            <Route index element={<HomeIns />} />
           </Route>
 
           {/* Fertilizers Section */}
