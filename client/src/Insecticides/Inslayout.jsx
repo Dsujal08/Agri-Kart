@@ -1,7 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../components/Header';
-import CartTab from '../Seeds/cartTab';
+import CartTab from './InscartTab';
 import { useCart } from '../Seeds/Cart';
 
 const Layout = () => {

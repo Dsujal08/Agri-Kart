@@ -36,7 +36,7 @@ export default function ContinuousSlider() {
   const navigate = useNavigate(); // For navigation
 
   return (
-    <div className="overflow-hidden bg-green-50 dark:bg-green-900 w-full py-10">
+    <div className="overflow-hidden  w-full py-10">
       <h2 className="text-center text-4xl font-bold text-green-800 dark:text-green-200 mb-8">
         Government Agriculture Schemes
       </h2>

@@ -1,5 +1,5 @@
 import React from "react";
-import { useCart } from "./Cart";
+import { useCart } from "./InsCart";
 import { Trash2 } from "lucide-react";
 
 const CartItem = ({ data }) => {

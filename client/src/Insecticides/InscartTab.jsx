@@ -1,7 +1,7 @@
 import React from "react";
-import { useCart } from "./Cart";
+import { useCart } from "./InsCart";
 import { useNavigate } from "react-router-dom";
-import CartItem from "./cartItem";
+import CartItem from "./InscartItem";
 import { products } from "./Insproducts";
 
 const CartTab = () => {

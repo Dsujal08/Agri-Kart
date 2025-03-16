@@ -8,12 +8,13 @@ import Brands from "../cards/Brands";
 import Items from "../cards/items";
 import Sliderimg from "../cards/sliderimg";
 import Schemes from "../Schemes/Schemes";
+import FertilizerCalculator from "../Calculator/Calculator"; // Import chatbot
 
 const Home = () => {
   return (
-    <div>
+    <div className=" bg-gradient-to-br from-green-100 to-yellow-200">
       <NavBar />
-      <main className="mx-auto  space-y-10">
+      <main className="mx-auto space-y-10">
         <Slider />
         <Cards />
         <img
@@ -23,7 +24,6 @@ const Home = () => {
           loading="lazy"
         />
         <Items />
-
         <Com />
         <img
           src="/src/cards/brands_img/tm_home_2_page_v2.png"
@@ -32,6 +32,12 @@ const Home = () => {
           loading="lazy"
         />
         <Sliderimg />
+        
+        {/* Fertilizer Converter Chatbot */}
+        
+          <FertilizerCalculator />
+
+        
         <Schemes />
         <Brands />
       </main>

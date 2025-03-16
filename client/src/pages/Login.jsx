@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { backendUrl, setIsLoggedin, getUserData } = useContext(AppContent);
+  const { backendUrl, setIsLoggedin, getUserData, user } = useContext(AppContent);
 
   const [state, setState] = useState("Sign Up");
   const [name, setName] = useState("");
@@ -39,20 +39,18 @@ const Login = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen px-6 bg-gradient-to-br from-blue-200 to-purple-400">
-      <h1 onClick={() => navigate("/")} className="absolute top-4 left-4 text-blue-500 cursor-pointer">
-        Back
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#1E293B] to-[#4338CA] text-white">
+      <h1 onClick={() => navigate("/")} className="absolute top-4 left-4 text-indigo-300 cursor-pointer hover:underline">
+        ← Back
       </h1>
 
-      <div className="bg-slate-900 p-10 rounded-lg shadow-lg w-full sm:w-96 text-indigo-300 text-sm">
-        <h2 className="text-center text-lg font-semibold text-indigo-400">
-          {state === "Sign Up" ? "Create Account" : "Login"}
-        </h2>
-        <p className="text-center text-sm mb-6">
-          {state === "Sign Up" ? "Create your account to get started!" : "Welcome back! Please log in."}
+      <div className="bg-[#0F172A] p-10 rounded-2xl shadow-xl w-full sm:w-96">
+        <h2 className="text-center text-lg font-semibold text-indigo-400">{state === "Sign Up" ? "Create Account" : "Login"}</h2>
+        <p className="text-center text-sm mb-6 text-gray-400">
+          {state === "Sign Up" ? "Create your account to get started!" : `Welcome back, ${user?.name || "User"}! Please log in.`}
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-5">
           {state === "Sign Up" && (
             <Input type="text" name="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="Full Name" />
           )}
@@ -60,14 +58,16 @@ const Login = () => {
           <Input type="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" />
 
           {state !== "Sign Up" && (
-            <p onClick={() => navigate("/reset-password")} className="mb-4 text-indigo-500 cursor-pointer text-sm hover:underline">
+            <p onClick={() => navigate("/reset-password")} className="text-indigo-400 cursor-pointer text-sm hover:underline text-center">
               Forgot Password?
             </p>
           )}
 
           <button
             type="submit"
-            className={`w-full py-2.5 rounded-full ${loading ? "bg-gray-500 cursor-not-allowed" : "bg-indigo-600 hover:opacity-90"} text-white font-medium transition`}
+            className={`w-full py-3 rounded-full font-medium transition duration-300 ${
+              loading ? "bg-gray-600 cursor-not-allowed" : "bg-indigo-600 hover:bg-indigo-700"
+            }`}
             disabled={loading}
           >
             {loading ? "Processing..." : state === "Sign Up" ? "Sign Up" : "Login"}
@@ -76,7 +76,7 @@ const Login = () => {
 
         <p className="text-gray-400 text-center text-xs mt-4">
           {state === "Sign Up" ? "Already have an account?" : "Don't have an account?"}
-          <span className="text-blue-400 cursor-pointer underline" onClick={() => setState(state === "Sign Up" ? "Login" : "Sign Up")}>
+          <span className="text-indigo-400 cursor-pointer underline" onClick={() => setState(state === "Sign Up" ? "Login" : "Sign Up")}>
             {state === "Sign Up" ? " Login Here" : " Sign Up"}
           </span>
         </p>
@@ -85,11 +85,11 @@ const Login = () => {
   );
 };
 
-// ✅ Fixed Input Component
+// ✅ Improved Input Component
 const Input = ({ type, name, value, onChange, placeholder }) => (
-  <div className="mb-4 flex items-center gap-3 w-full px-5 py-2 rounded-full bg-[#333A5C]">
+  <div className="flex items-center gap-3 w-full px-5 py-3 rounded-full bg-[#1E293B] focus-within:ring-2 focus-within:ring-indigo-500">
     <input
-      className="bg-transparent outline-none w-full text-white"
+      className="bg-transparent outline-none w-full text-white placeholder-gray-400"
       type={type}
       name={name}
       value={value}

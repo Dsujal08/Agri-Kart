@@ -11,7 +11,7 @@ const ProductCart = ({ data }) => {
     const navigate = useNavigate();
     const timeoutRef = useRef(null);
 
-    const { id, name, price, image, slug, description, category, discount, stock } = data;
+    const { id, name, price, image, slug, category, discount, stock } = data;
     const [added, setAdded] = useState(false);
     const [isAdding, setIsAdding] = useState(false);
 
@@ -56,42 +56,35 @@ const ProductCart = ({ data }) => {
     }, []);
 
     return (
-        <div className="bg-white p-5 rounded-xl shadow-lg hover:shadow-2xl transform transition-all hover:-translate-y-2 duration-300 relative flex flex-col border border-gray-200">
-            
-            {/* Category Tag */}
+        <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transform transition-all hover:-translate-y-2 duration-300 border border-gray-100 relative flex flex-col">
             {category && (
-                <span className="absolute top-3 left-3 bg-green-300 text-green-900 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                <span className="absolute top-3 left-3 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase shadow-md">
                     {category}
                 </span>
             )}
 
-            {/* Discount Badge */}
             {discount > 0 && (
-                <span className="absolute top-3 right-3 bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-pulse">
+                <span className="absolute top-3 right-3 bg-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md animate-bounce">
                     {discount}% OFF
                 </span>
             )}
 
-            {/* Product Image */}
             <Link to={`/product/${slug}`} className="block">
                 <div className="relative">
                     <img
                         src={image}
-                        alt={name}
+                        alt={`Image of ${name}`}
                         className="w-full h-56 object-cover rounded-lg shadow-md transition-transform duration-300 hover:scale-105"
                     />
-                    {added && <div className="absolute inset-0 bg-green-200 opacity-30 rounded-lg animate-ping"></div>}
+                    {added && <div className="absolute inset-0 bg-green-300 opacity-30 rounded-lg animate-ping"></div>}
                 </div>
             </Link>
 
-            {/* Product Details */}
             <div className="text-center mt-4">
-                <h3 className="text-lg font-semibold text-gray-900 transition-colors duration-300 hover:text-yellow-500 cursor-pointer">
+                <h3 className="text-lg font-semibold text-gray-900 hover:text-yellow-500 transition-colors duration-300 cursor-pointer">
                     {name}
                 </h3>
-                {/* <p className="text-sm text-gray-600 mt-1">{description.slice(0, 50)}...</p> */}
 
-                {/* Price Section */}
                 <p className="text-xl font-bold text-green-600 mt-2">
                     {discount ? (
                         <>
@@ -103,13 +96,11 @@ const ProductCart = ({ data }) => {
                     )}
                 </p>
 
-                {/* Stock Availability */}
                 <p className={`text-sm font-medium mt-2 ${stock < 3 ? "text-red-500" : "text-gray-600"}`}>
-                    {stock > 0 ? `Stock Available: ${stock}` : "Out of Stock"}
+                    {stock > 0 ? `Only ${stock} left in stock!` : "Out of Stock"}
                 </p>
             </div>
 
-            {/* Add to Cart Button */}
             <div className="mt-4 relative">
                 <button
                     className={`w-full px-4 py-2 rounded-lg shadow-md flex items-center justify-center gap-2 
