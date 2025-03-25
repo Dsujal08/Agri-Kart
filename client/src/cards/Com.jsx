@@ -26,28 +26,28 @@ const articles = [
     imgSrc: "https://i.pinimg.com/474x/2b/de/07/2bde0710331223ff678edddc705af4a4.jpg",
     link: "/insecticides",
   },
-  {
-    title: "Seeds",
-    category: "Agriculture",
-    description:
-      "A seed is a fertilized, mature ovule that encapsulates an embryonic plant, nutrient reserves, and a protective outer layer, ensuring survival and propagation.",
-    imgSrc: "https://i.pinimg.com/474x/de/53/6c/de536cf2a0530292bc38b6bdc97e1786.jpg",
-    link: "/seeds",
-  },
-  {
-    title: "Fertilizers",
-    category: "Agriculture",
-    description:
-      "Fertilizers are substances added to soil or plants to provide essential nutrients, such as nitrogen, phosphorus, and potassium, that promote plant growth and improve crop yields.",
-    imgSrc: "https://i.pinimg.com/474x/7d/d0/41/7dd0412f3272d107fe3eb08e6eb9614d.jpg",
-    link: "/fertilizers",
-  },
+  // {
+  //   title: "Seeds",
+  //   category: "Agriculture",
+  //   description:
+  //     "A seed is a fertilized, mature ovule that encapsulates an embryonic plant, nutrient reserves, and a protective outer layer, ensuring survival and propagation.",
+  //   imgSrc: "https://i.pinimg.com/474x/de/53/6c/de536cf2a0530292bc38b6bdc97e1786.jpg",
+  //   link: "/seeds",
+  // },
+  // {
+  //   title: "Fertilizers",
+  //   category: "Agriculture",
+  //   description:
+  //     "Fertilizers are substances added to soil or plants to provide essential nutrients, such as nitrogen, phosphorus, and potassium, that promote plant growth and improve crop yields.",
+  //   imgSrc: "https://i.pinimg.com/474x/7d/d0/41/7dd0412f3272d107fe3eb08e6eb9614d.jpg",
+  //   link: "/fertilizers",
+  // },
   {
     title: "Plants",
-    category: "Agriculture",
+    category: "Nature",
     description:
-      "Plants make for the best house companions, suitable for all your moods and every aesthetic. AgriꞰart, an online website for decorative plants, offers a wide variety of plants so that you can buy plants online from the comfort of your home!",
-    imgSrc: "https://i.pinimg.com/474x/2b/de/07/2bde0710331223ff678edddc705af4a4.jpg",
+      "Plants beautify spaces, purify the air, and contribute to a healthier environment. Explore a wide variety of indoor and outdoor plants.",
+    imgSrc: "https://hips.hearstapps.com/hmg-prod/images/a-set-of-colorful-potted-plants-on-a-patterned-area-royalty-free-image-1716493110.jpg?crop=1.00xw:0.751xh;0,0.0671xh&resize=1200:*",
     link: "/plants",
   },
 ];
