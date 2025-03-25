@@ -26,6 +26,30 @@ const articles = [
     imgSrc: "https://i.pinimg.com/474x/2b/de/07/2bde0710331223ff678edddc705af4a4.jpg",
     link: "/insecticides",
   },
+  {
+    title: "Seeds",
+    category: "Agriculture",
+    description:
+      "A seed is a fertilized, mature ovule that encapsulates an embryonic plant, nutrient reserves, and a protective outer layer, ensuring survival and propagation.",
+    imgSrc: "https://i.pinimg.com/474x/de/53/6c/de536cf2a0530292bc38b6bdc97e1786.jpg",
+    link: "/seeds",
+  },
+  {
+    title: "Fertilizers",
+    category: "Agriculture",
+    description:
+      "Fertilizers are substances added to soil or plants to provide essential nutrients, such as nitrogen, phosphorus, and potassium, that promote plant growth and improve crop yields.",
+    imgSrc: "https://i.pinimg.com/474x/7d/d0/41/7dd0412f3272d107fe3eb08e6eb9614d.jpg",
+    link: "/fertilizers",
+  },
+  {
+    title: "Insecticides",
+    category: "Agriculture",
+    description:
+      "Insecticides are chemical or natural substances used to control, repel, or eliminate insects that can damage crops, plants, and structures.",
+    imgSrc: "https://i.pinimg.com/474x/2b/de/07/2bde0710331223ff678edddc705af4a4.jpg",
+    link: "/insecticides",
+  },
 ];
 
 const ArticleCard = ({ title, category, description, imgSrc, link }) => (
