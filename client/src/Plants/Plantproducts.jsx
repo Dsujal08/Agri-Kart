@@ -1,4 +1,4 @@
-import GreenCapsicumSeeds from '../Seeds/Img/Green_Capsicum_Seeds.png'; 
+import BrazilianWoodPlant from './Img/BrazilianWoodPlant.png'; 
 import CorianderSeeds from '../Seeds/Img/Coriander(Dhaniya) Seeds.png'; 
 import BroccoliSeeds from '../Seeds/Img/Broccoli Seeds.png'; 
 import GreenCucumberSeeds from '../Seeds/Img/Green Cucumber(Kheera) Seeds.png'; 
@@ -9,14 +9,14 @@ import GreenChilliSeeds from '../Seeds/Img/Green Chilli(Hari Mirch) Seeds.png';
 import LotusSeeds from '../Seeds/Img/LotusSeeds.png'; 
 import FlowerSeedsBundleof5Packet from '../Seeds/Img/FlowerSeedsBundleof5Packet.png';
 
-export const products = [
+export const productss = [
     {
         id: 1,
-        name: "Green Capsicum Seeds",
-        price: 120,
-        discount: 18,
+        name: "Brazilian Wood Plant",
+        price: 1999,
+        discount: 76,
         stock: 15,
-        image: GreenCapsicumSeeds,
+        image: BrazilianWoodPlant,
         category: "Seeds",
         featured: true,
         description:
@@ -135,7 +135,4 @@ export const products = [
             "A bundle of five different flower seeds for a vibrant garden. Includes seasonal and perennial varieties to brighten up any outdoor space.",
         slug: "flower-seeds-bundle-of-5-packet",
     },
-
-
-    
 ];

@@ -43,6 +43,8 @@ import BrandsPage from './cards/BrandsPage';
 import OrganicFruits from './cards/organicfruits';
 import FertilizerCalculator from './Calculator/Calculator'
 
+import HomePlant from './Plants/HomePlant'
+
 const App = () => {
   return (
     <CartProvider>
@@ -85,6 +87,11 @@ const App = () => {
           <Route index element={<HomeIns />} />
         </Route>
         <Route path="/insDetails" element={<InsDetails />} />
+
+        {/* Plants Section */}
+        <Route path="/plants" element={<Layout />}>
+          <Route index element={<HomePlant />} />
+        </Route>
 
         {/* Brands Section */}
         <Route path="/trusted-brands" element={<Brands />} />
