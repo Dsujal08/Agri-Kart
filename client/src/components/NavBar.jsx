@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { AppContent } from "../content/AppContent";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FiMenu, FiX, FiUser, FiLogOut, FiCheckCircle } from "react-icons/fi";
+import { FiMenu, FiX, FiUser, FiLogOut, FiCheckCircle, FiShoppingCart } from "react-icons/fi";
 
 export default function Navbar() {
     const { userData, backendUrl, setUserData } = useContext(AppContent);
@@ -72,7 +72,8 @@ export default function Navbar() {
                     { name: "About Us", path: "/about-us" },
                     { name: "Services", path: "/services" },
                     { name: "Contact", path: "/contact" },
-                    { name: "Blog", path: "/blog" }
+                    { name: "Blog", path: "/blog" },
+               
                 ].map(({ name, path }) => (
                     <NavLink
                         key={path}
@@ -110,6 +111,9 @@ export default function Navbar() {
                                             <FiCheckCircle /> Verify Account
                                         </li>
                                     )}
+                                    <li onClick={() => navigate("/orders")} className="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-gray-200">
+                                        <FiShoppingCart /> View Orders
+                                    </li>
                                     <li
                                         onClick={handleLogout}
                                         className="px-4 py-2 flex items-center gap-2 text-red-500 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
@@ -124,55 +128,6 @@ export default function Navbar() {
                     <NavLink
                         to="/login"
                         className="bg-yellow-400 text-green-800 px-5 py-2 rounded-full shadow-md hover:bg-yellow-300 transition-all"
-                    >
-                        Log In
-                    </NavLink>
-                )}
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-                className="md:hidden text-white text-3xl"
-                onClick={() => setMobileMenuOpen((prev) => !prev)}
-                aria-label="Toggle mobile menu"
-            >
-                {mobileMenuOpen ? <FiX /> : <FiMenu />}
-            </button>
-
-            {/* Mobile Navigation */}
-            <div
-                className={`absolute top-20 left-0 w-full bg-green-700 text-white shadow-md flex flex-col items-center py-4 space-y-4 transition-all transform ${
-                    mobileMenuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-5 pointer-events-none"
-                } md:hidden dark:bg-gray-900 dark:text-white`}
-            >
-                {[
-                    { name: "Home", path: "/" },
-                    { name: "About Us", path: "/about-us" },
-                    { name: "Services", path: "/services" },
-                    { name: "Contact", path: "/contact" },
-                    { name: "Blog", path: "/blog" }
-                ].map(({ name, path }) => (
-                    <NavLink
-                        key={path}
-                        to={path}
-                        className="text-lg hover:text-yellow-300 transition-all"
-                        onClick={() => setMobileMenuOpen(false)}
-                    >
-                        {name}
-                    </NavLink>
-                ))}
-                {userData ? (
-                    <button
-                        onClick={handleLogout}
-                        className="bg-red-500 text-white px-6 py-2 rounded-full shadow-md hover:bg-red-400 transition-all"
-                    >
-                        Logout
-                    </button>
-                ) : (
-                    <NavLink
-                        to="/login"
-                        className="bg-yellow-400 text-green-800 px-6 py-2 rounded-full shadow-md hover:bg-yellow-300 transition-all"
-                        onClick={() => setMobileMenuOpen(false)}
                     >
                         Log In
                     </NavLink>
