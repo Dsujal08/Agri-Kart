@@ -81,7 +81,7 @@ const App = () => {
         </Route>
 
         {/* Insecticides Section */}
-        <Route path="/insecticides" element={<InsLayout />}>
+        <Route path="/insecticides" element={<Layout />}>
           <Route index element={<HomeIns />} />
         </Route>
         <Route path="/insDetails" element={<InsDetails />} />
