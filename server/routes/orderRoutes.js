@@ -1,16 +1,31 @@
-const express = require("express");
-const Order = require("../models/Order");
+import express from "express";
+import Order from "../models/Order.js"; // Import your order model
+
 const router = express.Router();
 
-// Save Order
 router.post("/orders", async (req, res) => {
   try {
-    const order = new Order(req.body);
-    await order.save();
-    res.status(201).json({ message: "Order placed successfully" });
+    const { items, totalAmount, paymentMethod, status, transactionId, deliveryDate } = req.body;
+
+    if (!items || items.length === 0) {
+      return res.status(400).json({ error: "Order items are required" });
+    }
+
+    const newOrder = new Order({
+      items,
+      totalAmount,
+      paymentMethod,
+      status,
+      transactionId,
+      deliveryDate,
+    });
+
+    await newOrder.save();
+    res.status(201).json({ message: "Order placed successfully", order: newOrder });
   } catch (error) {
-    res.status(500).json({ error: "Error saving order" });
+    console.error("Order saving error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-module.exports = router;
+export default router;

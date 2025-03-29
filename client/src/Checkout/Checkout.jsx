@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../Seeds/Cart";
 import { useNavigate } from "react-router-dom";
-import { Trash2, ArrowLeft } from "lucide-react";
+import { Trash2, ArrowLeft, CheckCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
 const backendUrl = "http://localhost:4000";
@@ -11,7 +11,8 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  
+  const [orderSuccess, setOrderSuccess] = useState(false);
+
   const totalAmount = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   const calculateDeliveryDate = () => {
@@ -44,19 +45,19 @@ const Checkout = () => {
         await saveOrderToBackend("Cash on Delivery", "Pending", null);
         return;
       }
-      
+
       const scriptLoaded = await loadRazorpayScript();
       if (!scriptLoaded) throw new Error("Failed to load Razorpay. Please try again.");
-  
+
       const response = await fetch(`${backendUrl}/api/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: totalAmount * 100, currency: "INR" }),
       });
-  
+
       const order = await response.json();
       if (!order.id) throw new Error("Order creation failed");
-  
+
       const options = {
         key: "rzp_test_LVkI1wI2uaJL80",
         amount: order.amount,
@@ -69,7 +70,7 @@ const Checkout = () => {
         },
         theme: { color: "#0A74DA" },
       };
-  
+
       const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
@@ -78,102 +79,71 @@ const Checkout = () => {
       setLoading(false);
     }
   };
-  
-  
 
   const saveOrderToBackend = async (paymentMethod, status, transactionId) => {
     try {
       const response = await fetch(`${backendUrl}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items,
-          totalAmount,
-          paymentMethod,
-          status,
-          transactionId,
-          deliveryDate,
-        }),
+        body: JSON.stringify({ items, totalAmount, paymentMethod, status, transactionId, deliveryDate }),
       });
-  
+
       if (!response.ok) throw new Error("Failed to save order");
-  
-      clearCart();  // Clear the cart after successful order placement
-      navigate("/view-orders");  // Redirect to "View Orders"
+      setOrderSuccess(true);
+
+      setTimeout(() => {
+        clearCart();
+        navigate("/view-orders");
+      }, 2000);
     } catch (error) {
       setError(error.message);
     }
   };
-  
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-indigo-100 to-teal-100 flex flex-col items-center p-6">
-      <motion.div 
-        className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 relative" 
-        initial={{ opacity: 0, y: -50 }} 
-        animate={{ opacity: 1, y: 0 }} 
-        transition={{ duration: 0.5 }}
-      >
-        <motion.button 
-          className="absolute top-4 left-4 flex items-center text-gray-700 hover:text-gray-900 transition-all" 
-          whileHover={{ scale: 1.1 }}
-          onClick={() => navigate(-1)}
-        >
-          <ArrowLeft size={20} className="mr-2" /> Back
-        </motion.button>
-        <h2 className="text-3xl font-bold text-gray-900 text-center mb-6">🛍 Order Summary</h2>
-        {items.length > 0 ? (
-          <motion.div 
-            className="space-y-6" 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            transition={{ delay: 0.3 }}
-          >
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      <motion.div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 relative" initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <button className="absolute top-4 left-4 text-gray-700 hover:text-gray-900" onClick={() => navigate(-1)}>
+          <ArrowLeft size={24} />
+        </button>
+        <h2 className="text-3xl font-bold text-center mb-6">🛍 Order Summary</h2>
+        {orderSuccess ? (
+          <div className="text-center">
+            <CheckCircle size={50} className="text-green-500 mx-auto mb-4" />
+            <p className="text-lg font-semibold text-green-600">Order placed successfully! Redirecting...</p>
+          </div>
+        ) : items.length > 0 ? (
+          <div className="space-y-6">
             {items.map((item) => (
-              <motion.div 
-                key={item.productId} 
-                className="flex items-center justify-between border-b pb-4" 
-                whileHover={{ scale: 1.02 }}
-              >
+              <div key={item.productId} className="flex justify-between items-center border-b pb-4">
                 <div className="flex items-center space-x-4">
                   <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg shadow-md" />
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-800">{item.name}</h3>
-                    <p className="text-gray-600">Qty: <span className="font-medium">{item.quantity}</span></p>
+                    <h3 className="text-lg font-semibold">{item.name}</h3>
+                    <p className="text-gray-600">Qty: {item.quantity}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
                   <p className="text-lg font-bold text-green-700">₹{(item.price * item.quantity).toFixed(2)}</p>
-                  <motion.button 
-                    className="text-red-500 hover:text-red-700 transition-all" 
-                    whileHover={{ scale: 1.2 }}
-                    onClick={() => removeFromCart(item.productId)}
-                  >
+                  <button className="text-red-500 hover:text-red-700" onClick={() => removeFromCart(item.productId)}>
                     <Trash2 size={20} />
-                  </motion.button>
+                  </button>
                 </div>
-              </motion.div>
+              </div>
             ))}
             <div className="flex justify-between text-2xl font-bold mt-6 border-t pt-4">
               <span>Total:</span>
               <span className="text-green-800">₹{totalAmount.toFixed(2)}</span>
             </div>
-            <div className="text-center text-gray-700 text-lg font-medium">Estimated Delivery Date: <span className="font-bold">{deliveryDate}</span></div>
-            <motion.button 
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 shadow-md transition-all" 
-              whileHover={{ scale: 1.05 }} 
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handlePayment("Online")}
-              disabled={loading}
-            >
+            <p className="text-center text-lg text-gray-700">Delivery Date: <span className="font-bold">{deliveryDate}</span></p>
+            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700" onClick={() => handlePayment("Online")} disabled={loading}>
               {loading ? "Processing..." : "Pay Online"}
-            </motion.button>
-          </motion.div>
+            </button>
+          </div>
         ) : (
-          <motion.p className="text-center text-gray-500" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            Your cart is empty.
-          </motion.p>
+          <p className="text-center text-gray-500">Your cart is empty.</p>
         )}
+        {error && <motion.div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg border border-red-400" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{error}</motion.div>}
       </motion.div>
     </div>
   );

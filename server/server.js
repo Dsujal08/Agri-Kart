@@ -7,6 +7,8 @@ import connectDB from "./config/mongobd.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import orderRoutes from "./routes/orderRoutes.js";
+
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -30,7 +32,7 @@ app.use((req, res, next) => {
 const ordersRoute = require("./routes/orders");
 
 
-app.use("/api", orderRoutes)
+app.use("/api", orderRoutes);
 
 app.use(ordersRoute);
 
