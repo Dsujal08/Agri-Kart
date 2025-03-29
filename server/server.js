@@ -26,6 +26,14 @@ app.use((req, res, next) => {
   next();
 });
 
+
+const ordersRoute = require("./routes/orders");
+
+
+app.use("/api", orderRoutes)
+
+app.use(ordersRoute);
+
 // ✅ API Routes
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);

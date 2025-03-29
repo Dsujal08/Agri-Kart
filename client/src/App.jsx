@@ -44,7 +44,7 @@ import OrganicFruits from './cards/organicfruits';
 import FertilizerCalculator from './Calculator/Calculator'
 
 import HomePlant from './Plants/HomePlant'
-import Orders from './components/Order'
+import Orders from './components/ViewOrder'
 const App = () => {
   return (
     <CartProvider>

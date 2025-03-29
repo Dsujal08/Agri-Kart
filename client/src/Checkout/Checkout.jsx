@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useCart } from "../Seeds/Cart";
 import { useNavigate } from "react-router-dom";
 import { Trash2, ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
 
 const backendUrl = "http://localhost:4000";
 
@@ -10,40 +11,52 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  
   const totalAmount = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  const loadRazorpay = () => {
+  const calculateDeliveryDate = () => {
+    const today = new Date();
+    today.setDate(today.getDate() + 5);
+    return today.toISOString().split("T")[0];
+  };
+
+  const deliveryDate = calculateDeliveryDate();
+
+  const loadRazorpayScript = () => {
     return new Promise((resolve) => {
       if (window.Razorpay) {
-        resolve(window.Razorpay);
-      } else {
-        const script = document.createElement("script");
-        script.src = "https://checkout.razorpay.com/v1/checkout.js";
-        script.onload = () => resolve(window.Razorpay);
-        script.onerror = () => resolve(null);
-        document.body.appendChild(script);
+        resolve(true);
+        return;
       }
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
     });
   };
 
-  const handlePayment = async () => {
+  const handlePayment = async (method) => {
     setLoading(true);
     setError(null);
-
     try {
+      if (method === "COD") {
+        await saveOrderToBackend("Cash on Delivery", "Pending", null);
+        return;
+      }
+      
+      const scriptLoaded = await loadRazorpayScript();
+      if (!scriptLoaded) throw new Error("Failed to load Razorpay. Please try again.");
+  
       const response = await fetch(`${backendUrl}/api/create-order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: totalAmount * 100, currency: "INR" }),
       });
-
+  
       const order = await response.json();
       if (!order.id) throw new Error("Order creation failed");
-
-      const Razorpay = await loadRazorpay();
-      if (!Razorpay) throw new Error("Failed to load Razorpay SDK");
-
+  
       const options = {
         key: "rzp_test_LVkI1wI2uaJL80",
         amount: order.amount,
@@ -52,45 +65,12 @@ const Checkout = () => {
         description: "Order Payment",
         order_id: order.id,
         handler: async (response) => {
-          const verifyResponse = await fetch(`${backendUrl}/api/verify-payment`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(response),
-          });
-
-          const verifyData = await verifyResponse.json();
-          if (verifyData.success) {
-            alert("Payment Successful!");
-
-            // Save Order to Backend
-            const saveOrderResponse = await fetch(`${backendUrl}/api/orders`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                userId: localStorage.getItem("userId"),
-                items,
-                totalAmount,
-                status: "Completed",
-                paymentId: response.razorpay_payment_id,
-              }),
-            });
-
-            const orderData = await saveOrderResponse.json();
-            if (!orderData.success) throw new Error("Failed to save order");
-
-            clearCart();
-            navigate("/orders");
-          } else {
-            setError("Payment verification failed");
-          }
-        },
-        modal: {
-          ondismiss: () => setError("Payment was cancelled"),
+          await saveOrderToBackend("Online Payment", "Completed", response.razorpay_payment_id);
         },
         theme: { color: "#0A74DA" },
       };
-
-      const rzp = new Razorpay(options);
+  
+      const rzp = new window.Razorpay(options);
       rzp.open();
     } catch (error) {
       setError(error.message);
@@ -98,19 +78,63 @@ const Checkout = () => {
       setLoading(false);
     }
   };
+  
+  
+
+  const saveOrderToBackend = async (paymentMethod, status, transactionId) => {
+    try {
+      const response = await fetch(`${backendUrl}/api/orders`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items,
+          totalAmount,
+          paymentMethod,
+          status,
+          transactionId,
+          deliveryDate,
+        }),
+      });
+  
+      if (!response.ok) throw new Error("Failed to save order");
+  
+      clearCart();  // Clear the cart after successful order placement
+      navigate("/view-orders");  // Redirect to "View Orders"
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8 relative">
-        <button className="absolute top-4 left-4 flex items-center text-gray-700 hover:text-gray-900" onClick={() => navigate(-1)}>
+    <div className="min-h-screen bg-gradient-to-r from-indigo-100 to-teal-100 flex flex-col items-center p-6">
+      <motion.div 
+        className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 relative" 
+        initial={{ opacity: 0, y: -50 }} 
+        animate={{ opacity: 1, y: 0 }} 
+        transition={{ duration: 0.5 }}
+      >
+        <motion.button 
+          className="absolute top-4 left-4 flex items-center text-gray-700 hover:text-gray-900 transition-all" 
+          whileHover={{ scale: 1.1 }}
+          onClick={() => navigate(-1)}
+        >
           <ArrowLeft size={20} className="mr-2" /> Back
-        </button>
-
+        </motion.button>
         <h2 className="text-3xl font-bold text-gray-900 text-center mb-6">🛍 Order Summary</h2>
         {items.length > 0 ? (
-          <div className="space-y-6">
+          <motion.div 
+            className="space-y-6" 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ delay: 0.3 }}
+          >
             {items.map((item) => (
-              <div key={item.productId} className="flex items-center justify-between border-b pb-4">
+              <motion.div 
+                key={item.productId} 
+                className="flex items-center justify-between border-b pb-4" 
+                whileHover={{ scale: 1.02 }}
+              >
                 <div className="flex items-center space-x-4">
                   <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg shadow-md" />
                   <div>
@@ -120,28 +144,37 @@ const Checkout = () => {
                 </div>
                 <div className="flex items-center space-x-4">
                   <p className="text-lg font-bold text-green-700">₹{(item.price * item.quantity).toFixed(2)}</p>
-                  <button className="text-red-500 hover:text-red-700 transition" onClick={() => removeFromCart(item.productId)}>
+                  <motion.button 
+                    className="text-red-500 hover:text-red-700 transition-all" 
+                    whileHover={{ scale: 1.2 }}
+                    onClick={() => removeFromCart(item.productId)}
+                  >
                     <Trash2 size={20} />
-                  </button>
+                  </motion.button>
                 </div>
-              </div>
+              </motion.div>
             ))}
-
             <div className="flex justify-between text-2xl font-bold mt-6 border-t pt-4">
               <span>Total:</span>
               <span className="text-green-800">₹{totalAmount.toFixed(2)}</span>
             </div>
-
-            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 shadow-md transition-transform transform hover:scale-105" onClick={handlePayment} disabled={loading}>
-              {loading ? "Processing..." : "Proceed to Payment →"}
-            </button>
-
-            {error && <p className="text-red-600 text-center font-semibold mt-4">{error}</p>}
-          </div>
+            <div className="text-center text-gray-700 text-lg font-medium">Estimated Delivery Date: <span className="font-bold">{deliveryDate}</span></div>
+            <motion.button 
+              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 shadow-md transition-all" 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handlePayment("Online")}
+              disabled={loading}
+            >
+              {loading ? "Processing..." : "Pay Online"}
+            </motion.button>
+          </motion.div>
         ) : (
-          <p className="text-center text-gray-500">Your cart is empty.</p>
+          <motion.p className="text-center text-gray-500" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+            Your cart is empty.
+          </motion.p>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };

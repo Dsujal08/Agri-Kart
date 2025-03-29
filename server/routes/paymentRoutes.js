@@ -12,26 +12,30 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// ✅ Correct Route Definition
+// ✅ Order Creation Route
 router.post("/create-order", async (req, res) => {
   try {
-    const { amount, currency } = req.body;
+    const { amount, currency = "INR" } = req.body;
 
-    if (!amount || isNaN(amount)) {
+    if (!amount || isNaN(amount) || amount <= 0) {
       return res.status(400).json({ error: "Invalid amount" });
+    }
+
+    if (typeof currency !== "string" || currency.length !== 3) {
+      return res.status(400).json({ error: "Invalid currency format" });
     }
 
     const options = {
       amount: parseInt(amount), // Already in paisa
-      currency: currency || "INR",
+      currency,
       receipt: `order_rcpt_${Date.now()}`,
     };
 
     const order = await razorpay.orders.create(options);
-    res.json(order);
+    res.status(201).json(order);
   } catch (error) {
-    console.error("Order creation error:", error.message);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Order creation error:", error.stack);
+    res.status(500).json({ error: "Failed to create order. Please try again." });
   }
 });
 
