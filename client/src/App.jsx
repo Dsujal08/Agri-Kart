@@ -44,7 +44,6 @@ import OrganicFruits from './cards/organicfruits';
 import FertilizerCalculator from './Calculator/Calculator'
 
 import HomePlant from './Plants/HomePlant'
-
 import Orders from './components/Order'
 const App = () => {
   return (
@@ -83,6 +82,7 @@ const App = () => {
         <Route path="/fertilizers" element={<Layout />}>
           <Route index element={<HomeFer />} />
         </Route>
+
 
         {/* Insecticides Section */}
         <Route path="/insecticides" element={<Layout />}>

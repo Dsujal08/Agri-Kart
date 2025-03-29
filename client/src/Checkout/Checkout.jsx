@@ -1,20 +1,112 @@
 import React, { useState } from "react";
 import { useCart } from "../Seeds/Cart";
 import { useNavigate } from "react-router-dom";
-import { Trash2 } from "lucide-react";
+import { Trash2, ArrowLeft } from "lucide-react";
+
+const backendUrl = "http://localhost:4000";
 
 const Checkout = () => {
-  const { items, removeFromCart } = useCart();
+  const { items, removeFromCart, clearCart } = useCart();
   const navigate = useNavigate();
-  const [paymentMethod, setPaymentMethod] = useState("card");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const totalAmount = items.reduce((total, item) => total + item.price * item.quantity, 0);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-[#DFFFD8] to-[#9DC08B] flex flex-col items-center p-6">
-      <div className="w-full max-w-2xl bg-white bg-opacity-90 backdrop-blur-lg shadow-2xl rounded-xl p-8">
-        <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center">🛍 Order Summary</h2>
+  const loadRazorpay = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(window.Razorpay);
+      } else {
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.onload = () => resolve(window.Razorpay);
+        script.onerror = () => resolve(null);
+        document.body.appendChild(script);
+      }
+    });
+  };
 
+  const handlePayment = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch(`${backendUrl}/api/create-order`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: totalAmount * 100, currency: "INR" }),
+      });
+
+      const order = await response.json();
+      if (!order.id) throw new Error("Order creation failed");
+
+      const Razorpay = await loadRazorpay();
+      if (!Razorpay) throw new Error("Failed to load Razorpay SDK");
+
+      const options = {
+        key: "rzp_test_LVkI1wI2uaJL80",
+        amount: order.amount,
+        currency: order.currency,
+        name: "AgriKart",
+        description: "Order Payment",
+        order_id: order.id,
+        handler: async (response) => {
+          const verifyResponse = await fetch(`${backendUrl}/api/verify-payment`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(response),
+          });
+
+          const verifyData = await verifyResponse.json();
+          if (verifyData.success) {
+            alert("Payment Successful!");
+
+            // Save Order to Backend
+            const saveOrderResponse = await fetch(`${backendUrl}/api/orders`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                userId: localStorage.getItem("userId"),
+                items,
+                totalAmount,
+                status: "Completed",
+                paymentId: response.razorpay_payment_id,
+              }),
+            });
+
+            const orderData = await saveOrderResponse.json();
+            if (!orderData.success) throw new Error("Failed to save order");
+
+            clearCart();
+            navigate("/orders");
+          } else {
+            setError("Payment verification failed");
+          }
+        },
+        modal: {
+          ondismiss: () => setError("Payment was cancelled"),
+        },
+        theme: { color: "#0A74DA" },
+      };
+
+      const rzp = new Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
+      <div className="w-full max-w-2xl bg-white rounded-xl shadow-xl p-8 relative">
+        <button className="absolute top-4 left-4 flex items-center text-gray-700 hover:text-gray-900" onClick={() => navigate(-1)}>
+          <ArrowLeft size={20} className="mr-2" /> Back
+        </button>
+
+        <h2 className="text-3xl font-bold text-gray-900 text-center mb-6">🛍 Order Summary</h2>
         {items.length > 0 ? (
           <div className="space-y-6">
             {items.map((item) => (
@@ -28,74 +120,26 @@ const Checkout = () => {
                 </div>
                 <div className="flex items-center space-x-4">
                   <p className="text-lg font-bold text-green-700">₹{(item.price * item.quantity).toFixed(2)}</p>
-                  <button
-                    className="text-red-500 hover:text-red-700 transition"
-                    onClick={() => removeFromCart(item.productId)}
-                  >
+                  <button className="text-red-500 hover:text-red-700 transition" onClick={() => removeFromCart(item.productId)}>
                     <Trash2 size={20} />
                   </button>
                 </div>
               </div>
             ))}
 
-            {/* Total Amount */}
             <div className="flex justify-between text-2xl font-bold mt-6 border-t pt-4">
               <span>Total:</span>
               <span className="text-green-800">₹{totalAmount.toFixed(2)}</span>
             </div>
 
-            {/* Payment Methods */}
-            <div className="mt-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-3">💳 Select Payment Method</h3>
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  className={`py-3 rounded-lg text-lg font-semibold transition border-2 ${
-                    paymentMethod === "card"
-                      ? "bg-green-600 text-white border-green-700"
-                      : "bg-gray-100 text-gray-800 border-gray-300"
-                  }`}
-                  onClick={() => setPaymentMethod("card")}
-                >
-                  Credit / Debit Card
-                </button>
-                <button
-                  className={`py-3 rounded-lg text-lg font-semibold transition border-2 ${
-                    paymentMethod === "upi"
-                      ? "bg-green-600 text-white border-green-700"
-                      : "bg-gray-100 text-gray-800 border-gray-300"
-                  }`}
-                  onClick={() => setPaymentMethod("upi")}
-                >
-                  UPI / Net Banking
-                </button>
-              </div>
-            </div>
+            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-blue-700 shadow-md transition-transform transform hover:scale-105" onClick={handlePayment} disabled={loading}>
+              {loading ? "Processing..." : "Proceed to Payment →"}
+            </button>
 
-            {/* Buttons */}
-            <div className="flex gap-4 mt-6">
-              <button
-                className="w-full bg-gray-300 text-gray-800 py-3 rounded-lg font-semibold text-lg hover:bg-gray-400 transition"
-                onClick={() => navigate(-1)}
-              >
-                ← Back to Cart
-              </button>
-              <button
-                className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-green-700 shadow-md transition-transform transform hover:scale-105"
-                onClick={() => navigate("/payment")}
-              >
-                Proceed to Payment →
-              </button>
-            </div>
+            {error && <p className="text-red-600 text-center font-semibold mt-4">{error}</p>}
           </div>
         ) : (
-          <div className="text-center text-gray-500 flex flex-col items-center">
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png"
-              alt="Empty Cart"
-              className="w-32 h-32 opacity-50"
-            />
-            <p className="text-lg mt-4">Your cart is empty. Add items before checkout.</p>
-          </div>
+          <p className="text-center text-gray-500">Your cart is empty.</p>
         )}
       </div>
     </div>

@@ -18,11 +18,14 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-async-handler": "^1.2.0",
+    "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.6",
     "morgan": "^1.10.0",
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
+    "razorpay": "^2.9.6",
+    "stripe": "^17.7.0",
     "validator": "^13.12.0",
     "vercel": "^41.2.2"
   }
