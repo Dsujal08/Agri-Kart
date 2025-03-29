@@ -8,22 +8,37 @@ import userRouter from './routes/userRoutes.js';
 
 const app = express();
 const port = process.env.PORT || 4000;
+
+// ✅ Connect to MongoDB
 connectDB();
 
-// ✅ Use CORS *before* defining routes
-app.use(cors({
-    origin: "http://localhost:5173", // Allow frontend origin
-    credentials: true // Allow credentials (cookies, auth headers)
-}));
-
+// ✅ Middleware
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ API ENDPOINTS
+// ✅ CORS Configuration
+app.use(cors({
+    origin: "http://localhost:5173", // Allow frontend origin
+    credentials: true // Allow cookies and authentication headers
+}));
+
+// ✅ Debugging: Log Incoming Requests
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
+
+// ✅ API Endpoints
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 
+// ✅ Default Route
+app.get('/', (req, res) => res.send("API is Running 🚀"));
 
-app.get('/', (req, res) => res.send("API Working "));
+// ✅ Handle Undefined Routes
+app.use((req, res) => {
+    res.status(404).json({ error: "Route Not Found" });
+});
 
-app.listen(port, () => console.log(`Server is running on port ${port}`));
+// ✅ Start Server
+app.listen(port, () => console.log(`🔥 Server is running on port ${port}`));
