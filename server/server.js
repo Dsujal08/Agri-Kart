@@ -3,12 +3,13 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import "dotenv/config";
-import morgan from "morgan";  // ✅ Improved Logging
+import morgan from "morgan";
 import connectDB from "./config/mongobd.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
-import order from "./routes/orders.js";
+import orderRoutes from "./routes/orders.js";
+import updateProfileRoute from "./routes/updateProfile.js"; // ✅ Corrected import
 
 const app = express();
 const port = process.env.PORT || 4000;
@@ -27,7 +28,8 @@ app.use(morgan("dev"));  // ✅ Better logging
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api", paymentRoutes);
-app.use("/api", order);
+app.use("/api", orderRoutes);
+app.use("/api/auth", updateProfileRoute); // ✅ Corrected route placement
 
 // ✅ Root Route
 app.get("/", (req, res) => res.send("🚀 AgriKart API is running..."));

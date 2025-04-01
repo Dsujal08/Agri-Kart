@@ -12,6 +12,9 @@ export default function EditProfile() {
         name: "",
         email: "",
         phone: "",
+        address: "",
+        dob: "", // Date of Birth
+        gender: "", // Gender
     });
 
     useEffect(() => {
@@ -20,6 +23,9 @@ export default function EditProfile() {
                 name: userData.name || "",
                 email: userData.email || "",
                 phone: userData.phone || "",
+                address: userData.address || "",
+                dob: userData.dob || "", // Default date of birth
+                gender: userData.gender || "", // Default gender
             });
         }
     }, [userData]);
@@ -62,7 +68,7 @@ export default function EditProfile() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
+                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
                         required
                     />
                 </div>
@@ -73,7 +79,7 @@ export default function EditProfile() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
+                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
                         required
                         disabled
                     />
@@ -85,19 +91,56 @@ export default function EditProfile() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white"
+                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
                         required
                     />
                 </div>
+                <div className="mt-4">
+                    <label className="block text-sm font-medium dark:text-white">Address</label>
+                    <input
+                        type="text"
+                        name="address"
+                        value={formData.address}
+                        onChange={handleChange}
+                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        required
+                    />
+                </div>
+                <div className="mt-4">
+                    <label className="block text-sm font-medium dark:text-white">Date of Birth</label>
+                    <input
+                        type="date"
+                        name="dob"
+                        value={formData.dob}
+                        onChange={handleChange}
+                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        required
+                    />
+                </div>
+                <div className="mt-4">
+                    <label className="block text-sm font-medium dark:text-white">Gender</label>
+                    <select
+                        name="gender"
+                        value={formData.gender}
+                        onChange={handleChange}
+                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        required
+                    >
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
                 <button
                     type="submit"
-                    className="mt-6 w-full bg-green-600 text-white py-2 rounded hover:bg-green-500"
+                    className="mt-6 w-full bg-green-600 text-white py-2 rounded hover:bg-green-500 focus:ring-2 focus:ring-green-500"
                 >
                     Save Changes
                 </button>
                 <button
                     type="button"
-                    className="mt-3 w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-400"
+                    className="mt-3 w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-400 focus:ring-2 focus:ring-gray-400"
                     onClick={() => navigate("/")}
                 >
                     Cancel

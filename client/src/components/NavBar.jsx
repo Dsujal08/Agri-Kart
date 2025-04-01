@@ -3,16 +3,14 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { AppContent } from "../content/AppContent";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { FiMenu, FiX, FiUser, FiLogOut, FiCheckCircle, FiShoppingCart } from "react-icons/fi";
+import { FiMenu, FiX, FiUser, FiLogOut, FiCheckCircle, FiShoppingCart, FiEdit } from "react-icons/fi";
 
 export default function Navbar() {
     const { userData, backendUrl, setUserData } = useContext(AppContent);
     const navigate = useNavigate();
-
+    
     const [showDropdown, setShowDropdown] = useState(false);
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const [isLoggingOut, setIsLoggingOut] = useState(false);
-
     const dropdownRef = useRef(null);
 
     const handleLogout = async () => {
@@ -67,13 +65,11 @@ export default function Navbar() {
 
             {/* Desktop Links */}
             <div className="hidden md:flex items-center space-x-6">
-                {[
-                    { name: "Home", path: "/" },
-                    { name: "About Us", path: "/about-us" },
-                    { name: "Services", path: "/services" },
-                    { name: "Contact", path: "/contact" },
-                    { name: "Blog", path: "/blog" },
-               
+                {[{ name: "Home", path: "/" },
+                  { name: "About Us", path: "/about-us" },
+                  { name: "Services", path: "/services" },
+                  { name: "Contact", path: "/contact" },
+                  { name: "Blog", path: "/blog" },
                 ].map(({ name, path }) => (
                     <NavLink
                         key={path}
@@ -111,10 +107,13 @@ export default function Navbar() {
                                             <FiCheckCircle /> Verify Account
                                         </li>
                                     )}
-                                    <li onClick={() => navigate("/orders")} className="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-gray-200">
+                                    <li onClick={() => navigate("/edit-profile")} className="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700">
+                                        <FiEdit /> Edit Profile
+                                    </li>
+                                    <li onClick={() => navigate("/orders")} className="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700">
                                         <FiShoppingCart /> View Orders
                                     </li>
-                                    <li onClick={() => navigate("/app")} className="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-gray-200">
+                                    <li onClick={() => navigate("/app")} className="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700">
                                         <FiShoppingCart /> Admin
                                     </li>
                                     <li
