@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { XCircle, Loader2, ArrowLeft } from "lucide-react";
-import { motion } from "framer-motion";
 
 const backendUrl = "http://localhost:4000";
 
@@ -11,63 +10,13 @@ const ViewOrders = () => {
   const [error, setError] = useState(null);
   const [cancelling, setCancelling] = useState(null);
   const navigate = useNavigate();
-  const userId = localStorage.getItem("userId"); // Ideally, fetch from context/global state
+  const userId = localStorage.getItem("userId");
 
-  useEffect(() => {
-    if (!userId) {
-      setError("User not logged in.");
-      setLoading(false);
-      return;
-    }
-    fetchOrders();
-  }, [userId]); // Include `userId` in dependencies
-
-  const fetchOrders = async () => {
-    try {
-      const response = await fetch(`${backendUrl}/api/orders?userId=${userId}`);
-      if (!response.ok) throw new Error("Failed to fetch orders.");
-      const data = await response.json();
-      setOrders(data);
-    } catch (err) {
-      setError(err.message || "An error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const cancelOrder = async (orderId) => {
-    setCancelling(orderId);
-    try {
-      const response = await fetch(`${backendUrl}/api/orders/${orderId}/cancel`, { method: "PATCH" });
-      if (!response.ok) throw new Error("Failed to cancel order.");
-      setOrders((prevOrders) =>
-        prevOrders.map((order) =>
-          order._id === orderId ? { ...order, status: "Cancelled" } : order
-        )
-      );
-    } catch (err) {
-      setError(err.message || "An error occurred while canceling.");
-    } finally {
-      setCancelling(null);
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    return new Intl.DateTimeFormat("en-IN", { dateStyle: "medium" }).format(new Date(dateString));
-  };
-
-  if (loading) return <Loader2 className="animate-spin w-10 h-10 mx-auto mt-10 text-blue-500" />;
-  if (error) return <p className="text-red-500 text-center mt-6">{error}</p>;
+ 
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <motion.div
-        className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-8 relative"
-        initial={{ opacity: 0, y: -50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-2xl p-8 relative">
         <button className="absolute top-4 left-4 text-gray-700 hover:text-gray-900" onClick={() => navigate(-1)}>
           <ArrowLeft size={24} />
         </button>
@@ -76,13 +25,7 @@ const ViewOrders = () => {
         {orders.length > 0 ? (
           <div className="space-y-6">
             {orders.map((order) => (
-              <motion.div
-                key={order._id}
-                className="border rounded-lg p-4 shadow-md bg-gray-50"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
+              <div key={order._id} className="border rounded-lg p-4 shadow-md bg-gray-50">
                 <div className="flex justify-between items-center">
                   <h3 className="text-lg font-semibold">Order #{order._id.slice(-6)}</h3>
                   <span
@@ -121,13 +64,13 @@ const ViewOrders = () => {
                     </button>
                   )}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         ) : (
           <p className="text-center text-gray-500">You have no orders.</p>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 };

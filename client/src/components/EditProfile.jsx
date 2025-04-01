@@ -3,6 +3,7 @@ import { AppContent } from "../content/AppContent";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { Loader2 } from "lucide-react"; // Importing icon for loading state
 
 export default function EditProfile() {
     const { userData, backendUrl, setUserData } = useContext(AppContent);
@@ -16,6 +17,9 @@ export default function EditProfile() {
         dob: "", // Date of Birth
         gender: "", // Gender
     });
+
+    const [loading, setLoading] = useState(false); // For showing loading spinner
+    const [showPasswordChange, setShowPasswordChange] = useState(false); // Toggle password change
 
     useEffect(() => {
         if (userData) {
@@ -36,6 +40,7 @@ export default function EditProfile() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true); // Start loading when the form is submitted
         try {
             const { data } = await axios.post(
                 `${backendUrl}/api/auth/update-profile`,
@@ -51,6 +56,8 @@ export default function EditProfile() {
             }
         } catch (error) {
             toast.error(error.response?.data?.message || "Failed to update profile");
+        } finally {
+            setLoading(false); // End loading when the request is done
         }
     };
 
@@ -61,7 +68,8 @@ export default function EditProfile() {
                 onSubmit={handleSubmit}
             >
                 <h2 className="text-3xl font-bold text-center text-green-700 dark:text-white mb-6">Edit Profile</h2>
-                
+
+                {/* Name */}
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Name</label>
                     <input
@@ -74,6 +82,7 @@ export default function EditProfile() {
                     />
                 </div>
 
+                {/* Email */}
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Email</label>
                     <input
@@ -87,6 +96,7 @@ export default function EditProfile() {
                     />
                 </div>
 
+                {/* Phone */}
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Phone</label>
                     <input
@@ -100,6 +110,7 @@ export default function EditProfile() {
                     />
                 </div>
 
+                {/* Address */}
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Address</label>
                     <input
@@ -112,6 +123,7 @@ export default function EditProfile() {
                     />
                 </div>
 
+                {/* Date of Birth */}
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Date of Birth</label>
                     <input
@@ -124,6 +136,7 @@ export default function EditProfile() {
                     />
                 </div>
 
+                {/* Gender */}
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Gender</label>
                     <select
@@ -140,12 +153,30 @@ export default function EditProfile() {
                     </select>
                 </div>
 
+                {/* Password Change Option */}
+                <div className="mt-4 text-sm text-blue-600 cursor-pointer" onClick={() => setShowPasswordChange(!showPasswordChange)}>
+                    <p>{showPasswordChange ? "Cancel password change" : "Change Password"}</p>
+                </div>
+
+                {showPasswordChange && (
+                    <div className="mt-4">
+                        <label className="block text-sm font-medium dark:text-white">New Password</label>
+                        <input
+                            type="password"
+                            name="password"
+                            onChange={handleChange}
+                            className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                        />
+                    </div>
+                )}
+
                 <div className="mt-6 flex justify-between gap-4">
                     <button
                         type="submit"
                         className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-500 transition-colors focus:ring-2 focus:ring-green-500 shadow-md"
+                        disabled={loading}
                     >
-                        Save Changes
+                        {loading ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : "Save Changes"}
                     </button>
                 </div>
 

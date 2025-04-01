@@ -1,5 +1,5 @@
 import express from "express";
-import User from "../models/EditUser.js"; // Import User model
+import User from "../models/user.js"; // Import User model
 import { verifyToken } from "../middleware/auth.js"; // Ensure user authentication
 
 const router = express.Router();
@@ -21,6 +21,24 @@ router.post("/update-profile", verifyToken, async (req, res) => {
             });
         }
 
+        // Validate phone number format (assuming it's numeric and 10 digits)
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phoneRegex.test(phone)) {
+            return res.status(400).json({
+                success: false,
+                message: "Please provide a valid 10-digit phone number.",
+            });
+        }
+
+        // Validate date of birth format (assuming it should be in the past)
+        const dobDate = new Date(dob);
+        if (dobDate >= new Date()) {
+            return res.status(400).json({
+                success: false,
+                message: "Date of birth must be a past date.",
+            });
+        }
+
         // Update user details
         const updatedUser = await User.findByIdAndUpdate(
             userId,
@@ -35,6 +53,7 @@ router.post("/update-profile", verifyToken, async (req, res) => {
             return res.status(404).json({ success: false, message: "User not found" });
         }
 
+        // Send the updated user details back to the client
         res.json({ success: true, user: updatedUser });
     } catch (error) {
         console.error("Profile Update Error:", error);
