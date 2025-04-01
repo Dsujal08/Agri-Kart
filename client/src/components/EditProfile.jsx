@@ -57,10 +57,11 @@ export default function EditProfile() {
     return (
         <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
             <form
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full max-w-md"
+                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full max-w-lg"
                 onSubmit={handleSubmit}
             >
-                <h2 className="text-2xl font-bold text-center text-green-700 dark:text-white">Edit Profile</h2>
+                <h2 className="text-3xl font-bold text-center text-green-700 dark:text-white mb-6">Edit Profile</h2>
+                
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Name</label>
                     <input
@@ -68,10 +69,11 @@ export default function EditProfile() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
                         required
                     />
                 </div>
+
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Email</label>
                     <input
@@ -79,11 +81,12 @@ export default function EditProfile() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
                         required
                         disabled
                     />
                 </div>
+
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Phone</label>
                     <input
@@ -91,10 +94,12 @@ export default function EditProfile() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                        pattern="\d*" // Only numbers allowed
                         required
                     />
                 </div>
+
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Address</label>
                     <input
@@ -102,10 +107,11 @@ export default function EditProfile() {
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
                         required
                     />
                 </div>
+
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Date of Birth</label>
                     <input
@@ -113,17 +119,18 @@ export default function EditProfile() {
                         name="dob"
                         value={formData.dob}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
                         required
                     />
                 </div>
+
                 <div className="mt-4">
                     <label className="block text-sm font-medium dark:text-white">Gender</label>
                     <select
                         name="gender"
                         value={formData.gender}
                         onChange={handleChange}
-                        className="mt-1 p-2 w-full border rounded dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500"
+                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
                         required
                     >
                         <option value="">Select Gender</option>
@@ -132,19 +139,25 @@ export default function EditProfile() {
                         <option value="Other">Other</option>
                     </select>
                 </div>
-                <button
-                    type="submit"
-                    className="mt-6 w-full bg-green-600 text-white py-2 rounded hover:bg-green-500 focus:ring-2 focus:ring-green-500"
-                >
-                    Save Changes
-                </button>
-                <button
-                    type="button"
-                    className="mt-3 w-full bg-gray-500 text-white py-2 rounded hover:bg-gray-400 focus:ring-2 focus:ring-gray-400"
-                    onClick={() => navigate("/")}
-                >
-                    Cancel
-                </button>
+
+                <div className="mt-6 flex justify-between gap-4">
+                    <button
+                        type="submit"
+                        className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-500 transition-colors focus:ring-2 focus:ring-green-500 shadow-md"
+                    >
+                        Save Changes
+                    </button>
+                </div>
+
+                <div className="mt-3">
+                    <button
+                        type="button"
+                        className="w-full bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-400 transition-colors focus:ring-2 focus:ring-gray-400 shadow-md"
+                        onClick={() => navigate("/")}
+                    >
+                        Cancel
+                    </button>
+                </div>
             </form>
         </div>
     );
