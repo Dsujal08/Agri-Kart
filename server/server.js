@@ -8,7 +8,6 @@ import connectDB from "./config/mongobd.js";
 import authRouter from "./routes/authRoutes.js";
 import userRouter from "./routes/userRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
-import orderRoutes from "./routes/orders.js";
 import updateProfileRoute from "./routes/updateProfile.js"; // ✅ Corrected import
 
 const app = express();
@@ -28,7 +27,7 @@ app.use(morgan("dev"));  // ✅ Better logging
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api", paymentRoutes);
-app.use("/api", orderRoutes);
+
 app.use("/api/auth", updateProfileRoute); // ✅ Corrected route placement
 
 // ✅ Root Route

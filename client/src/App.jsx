@@ -44,8 +44,9 @@ import OrganicFruits from './cards/organicfruits';
 import FertilizerCalculator from './Calculator/Calculator'
 
 import HomePlant from './Plants/HomePlant'
-import Orders from './components/ViewOrder'
+
 import AdminPlane from './Admin/AdminPlane'
+import ViewOrders from './components/ViewOrders';
 const App = () => {
   return (
     <CartProvider>
@@ -63,7 +64,7 @@ const App = () => {
         <Route path="/features" element={<Features />} />
         <Route path="/edit-profile" element={<EditProfile />} />
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/orders" element={<Orders />} />
+        <Route path="/view-orders" element={<ViewOrders />} />
         <Route path="/app" element={<AdminPlane />} />
         <Route path="/fertilizerconverter" element={<FertilizerCalculator />} />
 

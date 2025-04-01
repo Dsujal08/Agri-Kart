@@ -40,70 +40,100 @@ const Checkout = () => {
   const handlePayment = async (method) => {
     setLoading(true);
     setError(null);
+    
     try {
+      let paymentStatus = "Pending";
+      let orderId = null;
+  
       if (method === "COD") {
-        await saveOrderToBackend("Cash on Delivery", "Pending", null);
+        paymentStatus = "Pending"; // COD orders are unpaid at checkout
+        orderId = `COD_${Date.now()}`;
+      } else {
+        // Load Razorpay script
+        const scriptLoaded = await loadRazorpayScript();
+        if (!scriptLoaded) throw new Error("Failed to load Razorpay. Please try again.");
+  
+        // Create order in Razorpay
+        const response = await fetch(`${backendUrl}/api/create-order`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: totalAmount * 100, currency: "INR" }),
+        });
+  
+        const order = await response.json();
+        if (!order.id) throw new Error("Order creation failed.");
+  
+        orderId = order.id;
+  
+        const options = {
+          key: "rzp_test_LVkI1wI2uaJL80", // Replace with your Razorpay key
+          amount: order.amount,
+          currency: order.currency,
+          name: "AgriKart",
+          description: "Order Payment",
+          order_id: order.id,
+          handler: async (response) => {
+            paymentStatus = "Paid";
+            await saveOrder(orderId, paymentStatus);
+            clearCart();
+            setOrderSuccess(true);
+            setTimeout(() => navigate("/view-orders"), 2000);
+          },
+          theme: { color: "#0A74DA" },
+        };
+  
+        const rzp = new window.Razorpay(options);
+        rzp.open();
         return;
       }
-
-      const scriptLoaded = await loadRazorpayScript();
-      if (!scriptLoaded) throw new Error("Failed to load Razorpay. Please try again.");
-
-      const response = await fetch(`${backendUrl}/api/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: totalAmount * 100, currency: "INR" }),
-      });
-
-      const order = await response.json();
-      if (!order.id) throw new Error("Order creation failed");
-
-      const options = {
-        key: "rzp_test_LVkI1wI2uaJL80",
-        amount: order.amount,
-        currency: order.currency,
-        name: "AgriKart",
-        description: "Order Payment",
-        order_id: order.id,
-        handler: async (response) => {
-          await saveOrderToBackend("Online Payment", "Completed", response.razorpay_payment_id);
-        },
-        theme: { color: "#0A74DA" },
-      };
-
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+  
+      // Save COD order to the backend
+      await saveOrder(orderId, paymentStatus);
+      clearCart();
+      setOrderSuccess(true);
+      setTimeout(() => navigate("/view-orders"), 2000);
+      
     } catch (error) {
       setError(error.message);
     } finally {
       setLoading(false);
     }
   };
+  
 
-  const saveOrderToBackend = async (paymentMethod, status, transactionId) => {
+  const saveOrder = async (orderId, paymentStatus) => {
     try {
-      const response = await fetch(`${backendUrl}/api/orders`, {
+      await fetch(`${backendUrl}/api/orders`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items, totalAmount, paymentMethod, status, transactionId, deliveryDate }),
+        body: JSON.stringify({
+          userId: "USER_ID_HERE", // Replace with actual logged-in user ID
+          items,
+          totalAmount,
+          paymentMethod: paymentStatus === "Paid" ? "Online" : "COD",
+          paymentStatus,
+          status: "Processing",
+          deliveryDate
+        }),
       });
-
-      if (!response.ok) throw new Error("Failed to save order");
-      setOrderSuccess(true);
-
-      setTimeout(() => {
-        clearCart();
-        navigate("/view-orders");
-      }, 2000);
     } catch (error) {
-      setError(error.message);
+      console.error("Failed to save order:", error);
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center p-6">
-      <motion.div className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 relative" initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <button className="absolute top-4 left-4 text-gray-700 hover:text-gray-900" onClick={() => navigate(-1)}>
+      <motion.div
+        className="w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-8 relative"
+        initial={{ opacity: 0, y: -50 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <button
+          className="absolute top-4 left-4 text-gray-700 hover:text-gray-900"
+          onClick={() => navigate(-1)}
+        >
           <ArrowLeft size={24} />
         </button>
         <h2 className="text-3xl font-bold text-center mb-6">🛍 Order Summary</h2>
@@ -117,15 +147,24 @@ const Checkout = () => {
             {items.map((item) => (
               <div key={item.productId} className="flex justify-between items-center border-b pb-4">
                 <div className="flex items-center space-x-4">
-                  <img src={item.image} alt={item.name} className="w-20 h-20 object-cover rounded-lg shadow-md" />
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-20 h-20 object-cover rounded-lg shadow-md"
+                  />
                   <div>
                     <h3 className="text-lg font-semibold">{item.name}</h3>
                     <p className="text-gray-600">Qty: {item.quantity}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-4">
-                  <p className="text-lg font-bold text-green-700">₹{(item.price * item.quantity).toFixed(2)}</p>
-                  <button className="text-red-500 hover:text-red-700" onClick={() => removeFromCart(item.productId)}>
+                  <p className="text-lg font-bold text-green-700">
+                    ₹{(item.price * item.quantity).toFixed(2)}
+                  </p>
+                  <button
+                    className="text-red-500 hover:text-red-700"
+                    onClick={() => removeFromCart(item.productId)}
+                  >
                     <Trash2 size={20} />
                   </button>
                 </div>
@@ -135,15 +174,38 @@ const Checkout = () => {
               <span>Total:</span>
               <span className="text-green-800">₹{totalAmount.toFixed(2)}</span>
             </div>
-            <p className="text-center text-lg text-gray-700">Delivery Date: <span className="font-bold">{deliveryDate}</span></p>
-            <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700" onClick={() => handlePayment("Online")} disabled={loading}>
-              {loading ? "Processing..." : "Pay Online"}
-            </button>
+            <p className="text-center text-lg text-gray-700">
+              Delivery Date: <span className="font-bold">{deliveryDate}</span>
+            </p>
+            <div className="space-y-4">
+              <button
+                className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700"
+                onClick={() => handlePayment("Online")}
+                disabled={loading}
+              >
+                {loading ? "Processing..." : "Pay Online"}
+              </button>
+              <button
+                className="w-full bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700"
+                onClick={() => handlePayment("COD")}
+                disabled={loading}
+              >
+                {loading ? "Processing..." : "Cash on Delivery (COD)"}
+              </button>
+            </div>
           </div>
         ) : (
           <p className="text-center text-gray-500">Your cart is empty.</p>
         )}
-        {error && <motion.div className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg border border-red-400" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>{error}</motion.div>}
+        {error && (
+          <motion.div
+            className="mt-4 p-3 bg-red-100 text-red-700 rounded-lg border border-red-400"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {error}
+          </motion.div>
+        )}
       </motion.div>
     </div>
   );
