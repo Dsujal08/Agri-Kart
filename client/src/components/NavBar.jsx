@@ -114,6 +114,9 @@ export default function Navbar() {
                                     <li onClick={() => navigate("/orders")} className="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-gray-200">
                                         <FiShoppingCart /> View Orders
                                     </li>
+                                    <li onClick={() => navigate("/app")} className="px-4 py-2 flex items-center gap-2 cursor-pointer hover:bg-gray-200">
+                                        <FiShoppingCart /> Admin
+                                    </li>
                                     <li
                                         onClick={handleLogout}
                                         className="px-4 py-2 flex items-center gap-2 text-red-500 hover:bg-gray-200 dark:hover:bg-gray-700 cursor-pointer"
