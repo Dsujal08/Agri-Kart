@@ -62,12 +62,14 @@ export default function EditProfile() {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="flex justify-center items-center min-h-screen bg-gray-100 dark:bg-gray-900 px-4 sm:px-8">
             <form
-                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 w-full max-w-lg"
+                className="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 sm:p-8 w-full max-w-lg transform transition-all duration-300 ease-in-out scale-100 hover:scale-105"
                 onSubmit={handleSubmit}
             >
-                <h2 className="text-3xl font-bold text-center text-green-700 dark:text-white mb-6">Edit Profile</h2>
+                <h2 className="text-3xl font-bold text-center text-green-700 dark:text-white mb-6 transition-transform duration-300 ease-in-out transform hover:scale-110">
+                    Edit Profile
+                </h2>
 
                 {/* Name */}
                 <div className="mt-4">
@@ -77,7 +79,7 @@ export default function EditProfile() {
                         name="name"
                         value={formData.name}
                         onChange={handleChange}
-                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                        className="mt-1 p-3 w-full border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md transition-all duration-300 ease-in-out"
                         required
                     />
                 </div>
@@ -90,7 +92,7 @@ export default function EditProfile() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                        className="mt-1 p-3 w-full border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md transition-all duration-300 ease-in-out"
                         required
                         disabled
                     />
@@ -104,7 +106,7 @@ export default function EditProfile() {
                         name="phone"
                         value={formData.phone}
                         onChange={handleChange}
-                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                        className="mt-1 p-3 w-full border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md transition-all duration-300 ease-in-out"
                         pattern="\d*" // Only numbers allowed
                         required
                     />
@@ -118,7 +120,7 @@ export default function EditProfile() {
                         name="address"
                         value={formData.address}
                         onChange={handleChange}
-                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                        className="mt-1 p-3 w-full border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md transition-all duration-300 ease-in-out"
                         required
                     />
                 </div>
@@ -131,7 +133,7 @@ export default function EditProfile() {
                         name="dob"
                         value={formData.dob}
                         onChange={handleChange}
-                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                        className="mt-1 p-3 w-full border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md transition-all duration-300 ease-in-out"
                         required
                     />
                 </div>
@@ -143,7 +145,7 @@ export default function EditProfile() {
                         name="gender"
                         value={formData.gender}
                         onChange={handleChange}
-                        className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                        className="mt-1 p-3 w-full border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md transition-all duration-300 ease-in-out"
                         required
                     >
                         <option value="">Select Gender</option>
@@ -154,7 +156,10 @@ export default function EditProfile() {
                 </div>
 
                 {/* Password Change Option */}
-                <div className="mt-4 text-sm text-blue-600 cursor-pointer" onClick={() => setShowPasswordChange(!showPasswordChange)}>
+                <div
+                    className="mt-4 text-sm text-blue-600 cursor-pointer hover:text-blue-400 transition-colors duration-300 ease-in-out"
+                    onClick={() => setShowPasswordChange(!showPasswordChange)}
+                >
                     <p>{showPasswordChange ? "Cancel password change" : "Change Password"}</p>
                 </div>
 
@@ -165,25 +170,27 @@ export default function EditProfile() {
                             type="password"
                             name="password"
                             onChange={handleChange}
-                            className="mt-1 p-3 w-full border rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md"
+                            className="mt-1 p-3 w-full border border-gray-300 rounded-lg dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-green-500 shadow-md transition-all duration-300 ease-in-out"
                         />
                     </div>
                 )}
 
+                {/* Submit Button */}
                 <div className="mt-6 flex justify-between gap-4">
                     <button
                         type="submit"
-                        className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-500 transition-colors focus:ring-2 focus:ring-green-500 shadow-md"
+                        className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-500 transition-colors duration-300 ease-in-out focus:ring-2 focus:ring-green-500 shadow-md"
                         disabled={loading}
                     >
                         {loading ? <Loader2 className="animate-spin w-5 h-5 mx-auto" /> : "Save Changes"}
                     </button>
                 </div>
 
+                {/* Cancel Button */}
                 <div className="mt-3">
                     <button
                         type="button"
-                        className="w-full bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-400 transition-colors focus:ring-2 focus:ring-gray-400 shadow-md"
+                        className="w-full bg-gray-500 text-white py-3 rounded-lg hover:bg-gray-400 transition-colors duration-300 ease-in-out focus:ring-2 focus:ring-gray-400 shadow-md"
                         onClick={() => navigate("/")}
                     >
                         Cancel
