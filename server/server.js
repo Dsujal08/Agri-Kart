@@ -10,7 +10,6 @@ import userRouter from "./routes/userRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
 
 
-dotenv.config();
 const app = express();
 const port = process.env.PORT || 4000;
 
