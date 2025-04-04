@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react"; // Import icon
 import Sidebar from "./Sidebar";
 import Dashboard from "./Dashboard";
-import Orders from "./Orders";
+import Orders from "./AdminOrders";
 import Users from "./Users";
 import Settings from "./Settings";
 

@@ -11,11 +11,7 @@ const userSchema = new mongoose.Schema(
         resetOtp: { type: String, default: '' },
         resetOtpExpireAt: { type: Number, default: 0 },
 
-        // Additional fields for profile information
-        phone: { type: String, required: true, unique: true }, // Add phone number
-        address: { type: String, required: true },            // Add address
-        dob: { type: Date, required: true },                  // Add date of birth
-        gender: { type: String, required: true },             // Add gender
+                 
     },
     { timestamps: true } // Automatically add createdAt and updatedAt fields
 );

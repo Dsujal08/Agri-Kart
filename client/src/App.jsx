@@ -13,7 +13,7 @@ import AboutUs from './pages/AboutUs';
 import Services from './pages/Services';
 import ContactUs from './pages/ContactUs';
 import Features from './components/Features';
-import EditProfile from './components/EditProfile';
+
 
 // E-commerce & Product Sections
 import ProductDetail from './Seeds/Details';
@@ -46,7 +46,8 @@ import FertilizerCalculator from './Calculator/Calculator'
 import HomePlant from './Plants/HomePlant'
 
 import AdminPlane from './Admin/AdminPlane'
-import ViewOrders from './components/ViewOrders';
+import ViewOrders from './components/View-Order';
+
 const App = () => {
   return (
     <CartProvider>
@@ -62,9 +63,11 @@ const App = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/features" element={<Features />} />
-        <Route path="/edit-profile" element={<EditProfile />} />
+        <Route path="/viewOrder" element={<ViewOrders />} />
+    
+
         <Route path="/checkout" element={<Checkout />} />
-        <Route path="/view-orders" element={<ViewOrders />} />
+   
         <Route path="/app" element={<AdminPlane />} />
         <Route path="/fertilizerconverter" element={<FertilizerCalculator />} />
 
